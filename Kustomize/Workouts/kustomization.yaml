@@ -1,0 +1,49 @@
+
+#########  Config Map using properties file ########
+configMapGenerator:
+  - name: example-configmap-properties
+    files:
+      - "application.properties"
+  - name: example-configmap-env
+    files:
+      - ".env"
+  - name: example-configmap-literals
+    literals:
+      - Foo=Literals
+  - name: example-configmap-1
+    files:
+      - "application.properties"
+resources:
+  - "deployment.yaml"
+  - "service.yaml"
+# The generated ConfigMaps and Secrets have a content hash suffix appended. This ensures that a new ConfigMap or Secret is generated when the contents are changed. 
+#  To disable the behavior of appending a suffix, one can use generatorOptions
+generatorOptions:
+  disableNameSuffixHash: true
+
+######## Cross Cutting fields #########
+#namespace: my-namespace
+namePrefix: dev-
+nameSuffix: "-001"
+# Its applies to all labels(deployment, pods,container)
+commonLabels: 
+  app: bingo
+# Its applies to all annotation(deployment, pods,container)
+commonAnnotations:
+  oncallPager: 800-555-1212
+######## Cross Cutting fields #########
+patchesStrategicMerge:
+  - "increase_replicas_count.yaml"
+  - "set_memory.yaml"
+#customizing container images or injecting field values from other objects into containers without creating patches# 
+images:
+  - name: nginx
+    newName: nginx
+    newTag: 1.4.0
+# vars is used to replace actual service name in container's command
+vars:
+  - name: MY_SERVICE_NAME
+    objref:
+      kind: Service
+      name: my-nginx # service name
+      apiVersion: v1

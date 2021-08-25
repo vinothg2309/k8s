@@ -1,0 +1,220 @@
+*******
+COMMAND
+*******
+
+kubectl exec -it <POD_NAME> -- /bin/sh ====> Exec to pod
+kubectl top nodes
+kubectl top pods
+kubectl logs -f <POD_NAME ====> Stream t log
+kubectl api-versions ===> List of all API versions
+kubectl run -i --tty busybox --image=busybox -- sh  # Run pod as interactive shell
+kubectl exec --stdin --tty my-pod -- /bin/sh        # Interactive shell access to a running pod (1 container case)
+k exec -it gradle-app-c9c78b66b-75nv4 env --> List environment variables available inside the pod
+kubectl get services kube-dns --namespace=kube-system ---> Check if DNS is enabled in cluster
+
+Kustomize
+*********
+kubectl kustomize ./ - Display the output after applying kustomization
+kubectl apply -k ./ - Apply customization & run it
+kubectl delete -k ./ - delete
+kubectl describe -k ./
+kubectl diff -k ./  - compare the Deployment object dev-my-nginx against the state that the cluster would be in if the manifest was applied:
+
+*********
+GET TOKEN
+*********
+kubectl -n kubernetes-dashboard describe secret $(kubectl -n kubernetes-dashboard get secret | grep admin-user | awk '{print $1}')
+
+********
+MICROK8S
+********
+
+microk8s status --wait-ready  ====> List all addons
+microk8s kubectl get nodes ====> Get Node details
+microk8s enable <addon> =====> Enable specific addon
+https://microk8s.io/docs/addons#heading--list ====> addon URL
+alias kubectl='microk8s kubectl' ===> alias command
+microk8s kubectl port-forward -n kube-system service/kubernetes-dashboard 10443:443 ====> Dashboard URL
+kubectl -n monitoring port-forward grafana-5874b66f87-2pn5h 3200:3000  ====> Grafana
+
+microk8s enable dns ===> ENABLING DNS IS MUST FOR ACCESSING SERVICE
+
+Dashboard Tokens
+================
+
+token:      eyJhbGciOiJSUzI1NiIsImtpZCI6Il9VZ3NGRGZCclRfcHlaX2ZsUTZhaThBeVFlY3N6VWd1bThzdVprYWdyTFkifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlLXN5c3RlbSIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VjcmV0Lm5hbWUiOiJkZWZhdWx0LXRva2VuLW1yNDZ4Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZXJ2aWNlLWFjY291bnQubmFtZSI6ImRlZmF1bHQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC51aWQiOiIwNjViMGJmNS1kMDI0LTRlMzAtYTAxYy1lOWIyZGRkZDE0YTUiLCJzdWIiOiJzeXN0ZW06c2VydmljZWFjY291bnQ6a3ViZS1zeXN0ZW06ZGVmYXVsdCJ9.KbrL2_vb7Ugl5skZUIrQJar5ybYh9jgMyL2Et8S6jJdI92snfIPDchoGph3FHAt0pC4xjSJY192xDvncK1G2sD8i5FGPnZEZH9RTwtHlcbLlbYMtzUg0na5sacuwvnUK98djon5V7j-HlOQzxZm53Y5R-7XsO6VyPpxtMlLITnvpNdfvsN_YXLfF3nanmHI21kSLTs8SiZTPPQR4k6JuH4-oVtH1RaxHDMFtgPEE5mqR8OFfGwOKI0X3Aucf0K1GtkwodmR2W1B_9P2iuK8ld9RSPDVSSI7KNWHqg_SO2zccUwrAbxsmKaIfCgyDHfPURfKuAXCOZvWUeMI5HtwbAw
+
+*************
+STATE METRICS
+*************
+
+https://github.com/kubernetes/kube-state-metrics
+
+**********
+PROMETHEUS
+**********
+COURSE MATERIAL ===> /home/vinoth/Learning/Pluralsight/Kubernetes/Watched/kubernetes-developers-deploying-code.zip
+Git code ===> /home/vinoth/Learning/Kubernetes/Projects/DockerAndKubernetesCourseCode-master(https://github.com/DanWahlin/DockerAndKubernetesCourseCode.git)
+
+/home/vinoth/Learning/Kubernetes/Projects/DockerAndKubernetesCourseCode-master/samples/prometheus
+Update namespace in cluster-role-binding.yaml
+
+
+*******
+GRAFANA
+*******
+COURSE MATERIAL ===> /home/vinoth/Learning/Pluralsight/Kubernetes/Watched/kubernetes-developers-deploying-code.zip
+Git code ===> /home/vinoth/Learning/Kubernetes/Projects/DockerAndKubernetesCourseCode-master(https://github.com/DanWahlin/DockerAndKubernetesCourseCode.git)
+
+####### Make sure prometheus is running. Enable prometheus addon in microk8s ############
+
+/Learning/Kubernetes/docker-development-youtube-series-master/prometheus-monitoring/kubernetes/1.18.4/grafana/dashboard-nodeexporter.yaml 
+
+kubectl -n monitoring create -f prometheus-monitoring/kubernetes/1.18.4/grafana/dashboard-nodeexporter.yaml ===> Don't do kubectl apply since we are getting error.The ConfigMap "grafana-dashboard-nodeexporter" is invalid: metadata.annotations: Too long: must have at most 262144 bytes
+
+kubectl -n monitoring apply -f prometheus-monitoring/kubernetes/1.18.4/grafana/
+
+kubectl -n monitoring port-forward grafana-5874b66f87-2pn5h 3200:3000
+
+admin/admin
+
+Setup
+=====
+/home/vinoth/Learning/Kubernetes/Projects/DockerAndKubernetesCourseCode-master/samples/prometheus
+
+Refer "readme.md" in /home/vinoth/Learning/Kubernetes/Projects/DockerAndKubernetesCourseCode-master/samples/prometheus
+
+1. Start grafana ==> configured node port in service(http://localhost:32000) ===> import dashboard
+2. Search existing dashboard in https://grafana.com/grafana/dashboards/ (or) create new dashboard
+3. Search & copy existing dashboard "id", paste it in Import via grafana.com and load it.
+4. Select data source(Prometheus) as Prometheus
+5. Different dashboards can be configured ==> Refer above readme.md
+
+**********
+Monitoring
+**********
+https://github.com/DanWahlin/DockerAndKubernetesCourseCode
+
+*******
+ROLLOUT
+*******
+kubectl apply -f deployment.yml --save-config --record  ===> --record will save the history which will be rolledout
+kubectl rollout history deployment <DEPLOYMENT_NAME>  ===> Get info abt deployment
+kubectl rollout history deployment <DEPLOYMENT_NAME> --revision=2  ===> Get info abt deployment with revision 2
+kubectl rollout status -f deployment.yml ===> Check status
+kubectl rollout undo -f deployment.yml ===> Rollback a deployment
+kubectl rollout undo deployment <DEPLOYMENT_NAME> --to-revision=2 ===> Rollback a deployment with revision 2
+
+
+***********
+AUTOSCALING
+***********
+/home/vinoth/Learning/Kubernetes/docker-development-youtube-series-master/kubernetes/autoscaling
+Git: https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler
+Specify resources in container based on the app requirement
+kubectl autoscale deploy/application-cpu --cpu-percent=95 --min=1 --max=10  ====> Auto scale application
+kubectl get hpa(Horizontal Pod Autoscaler)  ====> Get all Autoscaler
+kubectl get hpa/employee -owide  =====> Get details about specific autoscaler
+kubectl api-versions ===> All supported kubernetes component version.
+
+******
+Docker
+******
+
+docker container exec -it <CONTAINER_ID> /bin/sh
+docker build -t vinothg2309/gradle-app .
+docker push vinothg2309/gradle-app
+docker container run -p 8080:8080 -d <IMAGE_NAME>
+docker inspect <CONTAINER_ID>
+
+GKE GCP Setup
+*************
+
+https://towardsdatascience.com/deploy-machine-learning-model-on-google-kubernetes-engine-94daac85108b
+
+1. https://console.cloud.google.com/ - Sign in
+2. Select "IAM & Admin"---> "Manage Resources" ---> Create New Project
+3. Go to "Home", choose the project & select "Activate cloud shell" in top right corner
+4. git clone https://github.com/pycaret/pycaret-deployment-google.git
+5. export PROJECT_ID=pycaret-kubernetes-demo
+6. docker build -t gcr.io/${PROJECT_ID}/insurance-app:v1 .
+7. gcloud auth configure-docker gcr.io
+8. 
+
+Ping pod using busybox
+**********************
+https://platform9.com/blog/kubernetes-service-discovery-principles-in-practice/
+Busybox pod yaml is available in /home/vinoth/Learning/Kubernetes/Projects/kubernetes/busybox.yaml
+pod name is jumpod
+Get Pod IP using kubectl describe pod
+kubectl exec -it jumpod ping <POD_IP>
+kubectl exec -it jumpod nslookup 10.244.0.149
+
+K8s Object with/without Namespace
+*********************************
+
+# In a namespace
+kubectl api-resources --namespaced=true
+
+# Not in a namespace
+kubectl api-resources --namespaced=false
+
+label selector
+
+ToDo
+****
+
+1. Redis
+2. Logging
+3. Prometheus & grafana
+4. Ingress - D
+5. kops
+6. ServiceAccount, ClusterRole, ClusterRoleBinding - D
+7. HELM hooks
+
+How to monitor the Kubernetes cluster?
+	Prometheus is used for Kubernetes monitoring. The Prometheus ecosystem consists of multiple components.
+	Mainly Prometheus server which scrapes and stores time-series data.
+	Client libraries for instrumenting application code.
+	Push gateway for supporting short-lived jobs.
+	Special-purpose exporters for services like StatsD, HAProxy, Graphite, etc.
+	An alert manager to handle alerts on various support tools.
+
+***********THAT DEVOPS GUY - DEMPER ****************
+
+https://github.com/marcel-dempers/docker-development-youtube-series
+
+ELK integration in k8s - https://github.com/DeekshithSN/kubernetes/tree/master/monitoring/kubernetes-elk
+https://github.com/DeekshithSN/kubernetes
+
+FLUENTD - https://github.com/fluent/fluentd-kubernetes-daemonset
+
+*********************
+Microservice-K8s-Helm
+*********************
+https://github.com/DeekshithSN/microservices-architect-config-starter
+
+
+Helm
+****
+
+https://github.com/DeekshithSN/microservices-architect-config-starter/tree/helm-charts
+****https://github.com/DeekshithSN
+
+
+cmd
+***
+
+**** https://phoenixnap.com/kb/helm-commands-cheat-sheet
+helm create <folder_name> --> Run this cmd to create helm chart folder inside the app.
+helm template test ./helm-chart/ (helm template <VERSION_NAME> <HELM_CHART_PATH>) --> Generate templates
+helm template emp ./helm-chart/ > helm-generated.yaml --> create generated template to the file
+helm install emp-service <HELM_FOLDER> --> helm install <INSTANCE> <HELM_FOLDER>
+helm install <INSTANCE> <HELM_FOLDER> --values <VALUES.yaml path>
+
+
+
+
+
+
+

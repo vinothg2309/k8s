@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stable-angular-$TARGET_ROLE
+spec:
+  selector:
+    matchLabels:
+      app: angular-app
+      role: $TARGET_ROLE
+  replicas: 1
+  template:
+    metadata:
+      name: stable-angular
+      labels:
+        app: angular-app
+        role: $TARGET_ROLE
+    spec:
+      containers:
+      - name: stable-angular
+        image: vinothg2309/angular-$IMAGE_VERSION
+        ports:
+        - containerPort: 80

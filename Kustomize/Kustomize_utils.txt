@@ -1,0 +1,5 @@
+kubectl kustomize ./ - Display the output after applying kustomization
+kubectl apply -k ./ - Apply customization & run it
+kubectl delete -k ./ - delete
+kubectl describe -k ./
+kubectl diff -k ./ # compare the Deployment object dev-my-nginx against the state that the cluster would be in if the manifest was applied:

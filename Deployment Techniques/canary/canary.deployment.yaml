@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary-angular
+spec:
+  selector:
+    matchLabels:
+      run: angular-app
+      track: canary
+  replicas: 1
+  template:
+    metadata:
+      name: canary-angular
+      labels:
+        run: angular-app
+        track: canary
+    spec:
+      containers:
+      - name: canary-angular
+        image: vinothg2309/angular-canary
+        ports:
+        - containerPort: 80

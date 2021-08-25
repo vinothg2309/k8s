@@ -1,0 +1,29 @@
+# Default values for helm-chart.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+replicaCount: 1
+
+image:
+  repository: vinothg2309/employee-service
+  pullPolicy: IfNotPresent
+
+service:
+  type: NodePort
+  port: 8080
+  name: employee-service
+  targetPort: 8000
+  nodePort: 30001
+
+deployment:
+  name: employee
+
+env:
+  - name: MONGO_DB_NAME
+    value: test
+  - name: MONGO_PORT
+    value: "27017"
+  - name: MONGO_HOST
+    value: mongodb
+  - name: MONGODB_URI
+    value: mongodb://mongodb:27017/test

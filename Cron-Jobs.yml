@@ -1,0 +1,22 @@
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+    name: hello-cron-job
+spec:
+    schedule: "*/5 * * * *"
+    successfulJobsHistoryLimit: 0
+    failedJobsHistoryLimit: 0
+    jobTemplate:
+        spec:
+            template:
+                spec:
+                    restartPolicy: OnFailure
+                    containers:
+                        - name: busybox
+                          image: busybox
+                          imagePullPolicy: IfNotPresent
+                          #command: [ "bin/bash", "-c", "date; echo Hello from the Kubernetes cluster" ] # Both commands are same
+                          command:
+                            - /bin/sh
+                            - -c
+                            - date; echo Hello from the Kubernetes cluster

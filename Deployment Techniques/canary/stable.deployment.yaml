@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: stable-angular
+spec:
+  selector:
+    matchLabels:
+      run: angular-app
+      track: stable
+  replicas: 4
+  template:
+    metadata:
+      name: stable-angular
+      labels:
+        run: angular-app
+        track: stable
+    spec:
+      containers:
+      - name: stable-angular
+        image: vinothg2309/angular-stable
+        ports:
+        - containerPort: 80
